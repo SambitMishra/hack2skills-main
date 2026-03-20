@@ -1,27 +1,33 @@
 # Stage 1: Build the React application
-FROM node:20-alpine AS builder
+# Use Node 22 LTS (alpine) — Vite 5 requires Node >= 20.19 or >= 22.12
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files and install dependencies
-# We use npm install since package-lock might be missing locally, or npm ci if present
-COPY package.json package-lock.json* ./
-RUN npm install
+# Copy package manifests first to leverage Docker layer caching
+COPY package.json package-lock.json* .npmrc* ./
 
-# Copy full source and build
+# Use npm ci for clean, reproducible installs from the lockfile
+# If no lockfile exists fall back to npm install
+RUN npm install --prefer-offline --no-audit
+
+# Copy the rest of the source and build
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve the application using Nginx
-FROM nginx:alpine
+# Stage 2: Serve the built assets using lightweight Nginx
+FROM nginx:stable-alpine
 
-# Copy custom Nginx configuration for SPA routing and Cloud Run Port 8080
+# Remove the default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy our custom config (port 8080 for Cloud Run)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy the built assets from the builder stage
+# Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Cloud Run requires the container to listen on $PORT (defaults to 8080)
+# Cloud Run requirement: listen on 8080
 EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]
