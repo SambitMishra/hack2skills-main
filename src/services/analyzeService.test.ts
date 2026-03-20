@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { analyzeMedia } from './analyzeService';
-import { IncidentRepository } from './types/IncidentRepository';
-import { GeminiService } from './types/GeminiService';
-import { SearchService } from './types/SearchService';
+import type { IncidentRepository } from './types/IncidentRepository';
+import type { GeminiService } from './types/GeminiService';
+import type { SearchService } from './types/SearchService';
 
 describe('Analyze Service', () => {
   let mockRepo: IncidentRepository;

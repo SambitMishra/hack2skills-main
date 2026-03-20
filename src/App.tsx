@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MediaUploader } from './components/Upload/MediaUploader';
 import { FloatingVerifyButton } from './components/Upload/FloatingVerifyButton';
 
