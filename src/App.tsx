@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { MediaUploader } from './components/Upload/MediaUploader';
 import { FloatingVerifyButton } from './components/Upload/FloatingVerifyButton';
-
+import { HotspotMap } from './components/Map/HotspotMap';
 function App() {
   const [file, setFile] = useState<File | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -36,6 +36,19 @@ function App() {
           </div>
         )}
       </main>
+
+      <section className="mt-12">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Global Incident Hotspots</h2>
+        <HotspotMap 
+          apiKey="DEMO_API_KEY_REQUIREMENT" 
+          incidents={[
+            { id: '1', lat: 28.6139, lng: 77.209, aiScore: 0.99, timestamp: new Date().toISOString() },
+            { id: '2', lat: 19.076, lng: 72.8777, aiScore: 0.85, timestamp: new Date().toISOString() },
+            { id: '3', lat: 12.9716, lng: 77.5946, aiScore: 0.92, timestamp: new Date().toISOString() }
+          ]} 
+          onRegionDoubleClick={() => console.log('Region clicked for detailed fake news feed')}
+        />
+      </section>
 
       <FloatingVerifyButton 
         hasFile={!!file} 
